@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 
 //register user
 const userRegServices = async (userData) => {
-  const { username, email, password } = userData;
+  const { username, email, password,img } = userData;
 
   try {
     // Validate input
@@ -50,13 +50,15 @@ const userRegServices = async (userData) => {
       username,
       email,
       password: hash,
+      img,
       otp,
     });
 
     const userResponse = {
+      userId: response._id, // or user.userId depending on your schema
       username: response.username,
       email: response.email,
-      userId: response._id, // or user.userId depending on your schema
+      img:response.img
     };
 
     // Configure transporter (move this outside the function in production)
@@ -128,6 +130,7 @@ const userRegServices = async (userData) => {
   }
 };
 
+//verify OTP 
 const verifyOTPServices = async (data) => {
   try {
     const { otp } = data;
@@ -195,10 +198,11 @@ const loginService = async(userData) => {
     return {success: false, message: "Require All Fields" };
   }
   const verifyUser = await usermodel.findOne({ email });
+  const filterResponse = {_id:verifyUser._id,username:verifyUser.username,email:verifyUser.email,img:verifyUser.img,isVerified:verifyUser.isVerified}
   if (verifyUser) {
       const match = bcrypt.compare(password, verifyUser.password);
       if(match){
-        return {success: true, message: "Login Success" };
+        return {success: true, message: "Login Success",data:filterResponse };
       }else{
         return {success: false, message: "Invalid Credentials" };
       }
@@ -206,6 +210,7 @@ const loginService = async(userData) => {
     return {success: false, message: "User not found" };
   }
 };
+
 
 module.exports = {
   userRegServices,

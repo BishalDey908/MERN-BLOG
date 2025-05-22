@@ -1,3 +1,4 @@
+const { types } = require("mime-types");
 const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
     username:{
@@ -14,6 +15,9 @@ const userSchema = new mongoose.Schema({
         require:true
     },
     otp:{
+        type:String,
+    },
+    img:{
         type:String,
     },
     isVerified:{
