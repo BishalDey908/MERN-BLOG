@@ -4,11 +4,11 @@ const mongoose = require("mongoose");
 const blogSchema = new mongoose.Schema({
     userId:{
         type:mongoose.Schema.Types.ObjectId,
-        require:true
+        // require:true
     },
     catagoryId:{
         type:mongoose.Schema.Types.ObjectId,
-        require:true
+        // require:true
     },
     title:{
         type:String,
@@ -20,7 +20,7 @@ const blogSchema = new mongoose.Schema({
     },
     image:{
         type:String,
-        // require:true
+        require:true
     },
     blog:{
         type:String,
