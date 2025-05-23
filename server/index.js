@@ -8,25 +8,32 @@ app.use(express.json());
 const PORT = process.env.PORT || 2000;
 
 //auth router import
-const userReg = require("./routes/auth.routes");
-const otp = require("./routes/auth.routes");
-const logIn = require("./routes/auth.routes");
-const userFetch = require("./routes/user.routes");
-const deleteUser = require("./routes/user.routes");
+const userRegRoute = require("./routes/auth.routes");
+const otpRoute = require("./routes/auth.routes");
+const logInRoute = require("./routes/auth.routes");
+const userFetchRoute = require("./routes/user.routes");
+const deleteUserRoute = require("./routes/user.routes");
+
 
 //blog router import
-const createBlog = require("./routes/blog.routes");
+const createBlogRoute = require("./routes/blog.routes");
+const getBlogCategoryRoute = require("./routes/blog.routes");
+const getBlogRoute = require("./routes/blog.routes");
+const getSingleBlogRoute = require("./routes/blog.routes");
 
 
 //auth router
-app.use("/api",userReg);
-app.use("/api",otp);
-app.use("/api",logIn);
-app.use("/api",userFetch);
-app.use("/api",deleteUser);
+app.use("/api",userRegRoute);
+app.use("/api",otpRoute);
+app.use("/api",logInRoute);
+app.use("/api",userFetchRoute);
+app.use("/api",deleteUserRoute);
 
 //blog router
-app.use("/api",createBlog)
+app.use("/api",createBlogRoute)
+app.use("/api",getBlogCategoryRoute)
+app.use("/api",getBlogRoute)
+app.use("/api",getSingleBlogRoute)
 
 app.get("/",(req,res)=>{
     res.send("ALL OK");

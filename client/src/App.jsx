@@ -2,6 +2,8 @@
 import './App.css'
 import  {BrowserRouter, Route, Routes } from "react-router-dom"
 import CreateBlog from './pages/CreateBlog'
+import ShowBlog from './pages/ShowBlog'
+import SingleBlog from './pages/SingleBlog'
 
 function App() {
   
@@ -10,7 +12,9 @@ function App() {
     <>
      <BrowserRouter>
      <Routes>
-      <Route path='/blog' element={<CreateBlog/>} />
+      <Route path='/create-blog' element={<CreateBlog/>} />
+      <Route path='/' element={<ShowBlog/>} />
+      <Route path='/single-blog' element={<SingleBlog/>} />
      </Routes>
      </BrowserRouter>
     </>

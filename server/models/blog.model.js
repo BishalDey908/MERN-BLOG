@@ -6,8 +6,8 @@ const blogSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         // require:true
     },
-    catagoryId:{
-        type:mongoose.Schema.Types.ObjectId,
+    category:{
+        type:String,
         // require:true
     },
     title:{
