@@ -1,4 +1,4 @@
-const { createBlogService, getBlogCategoryService, getBlogService, getSingleBlogService } = require("../services/blog.service")
+const { createBlogService, getBlogCategoryService, getBlogService, getSingleBlogService, usersBlogService, getUsersBlogService, updateUsersBlogService, deleteUserBlogService } = require("../services/blog.service")
 
 const blgCreationController = async(req,res) =>{
     try{
@@ -55,9 +55,79 @@ const getBlogCategoryController = async(req,res) =>{
     }
 }
 
+const getUserBlogController =async(req,res)=>{
+    try{
+        const responseData = await getUsersBlogService(req.body);
+        if(responseData.success){
+            res.status(200).json({message:responseData.message,success:responseData.success,data:responseData.data})
+        }else{
+            res.status(400).json({message:responseData.message,success:responseData.success,data:responseData.data})
+        }
+    }catch(err){
+            res.status(400).json({message:responseData.message,success:responseData.success,error:responseData.data})
+    }
+}
+
+const updateUserBlogController = async (req, res) => {
+    try {
+        const { _id } = req.params;
+        const responseData = await updateUsersBlogService({ _id }, req.body);
+        
+        if (responseData.success) {
+            res.status(200).json({
+                message: responseData.message,
+                success: responseData.success,
+                data: responseData.data
+            });
+        } else {
+            res.status(400).json({
+                message: responseData.message,
+                success: responseData.success,
+                data: responseData.data
+            });
+        }
+    } catch (err) {
+        res.status(500).json({
+            message: "Internal server error",
+            success: false,
+            error: err.message
+        });
+    }
+};
+
+const deleteUserBlogController = async (req, res) => {
+    try {
+       
+        const responseData = await deleteUserBlogService(req.params);
+        
+        if (responseData.success) {
+            res.status(200).json({
+                message: responseData.message,
+                success: responseData.success,
+                data: responseData.data
+            });
+        } else {
+            res.status(400).json({
+                message: responseData.message,
+                success: responseData.success,
+                data: responseData.data
+            });
+        }
+    } catch (err) {
+        res.status(500).json({
+            message: "Internal server error",
+            success: false,
+            error: err.message
+        });
+    }
+};
+
 module.exports = {
  blgCreationController,
  getBlogCategoryController,
  getBlogController,
- getSingleBlogController
+ getSingleBlogController,
+ getUserBlogController,
+ updateUserBlogController,
+ deleteUserBlogController
 }

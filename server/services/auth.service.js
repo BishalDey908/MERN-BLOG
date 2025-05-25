@@ -14,6 +14,11 @@ const userRegServices = async (userData) => {
       return { success: false, message: "All fields are required" };
     }
 
+    //Username validation
+    if(username.length<=4){
+      return {success:false,message:"Username Must contails atleast 5 character"}
+    }
+
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -173,7 +178,7 @@ const verifyOTPServices = async (data) => {
         otp: null,
         otpCreatedAt: null 
       },
-      { new: true, select: '_id username email isVerified' }
+      { new: true, select: '_id username email img isVerified' }
     );
 
     return {
@@ -192,25 +197,58 @@ const verifyOTPServices = async (data) => {
 };
 
 //login
-const loginService = async(userData) => {
+const loginService = async (userData) => {
   const { email, password } = userData;
-  if(!email || !password){
-    return {success: false, message: "Require All Fields" };
+  
+  // Validate input fields
+  if (!email || !password) {
+    return { success: false, message: "All fields are required" };
   }
-  const verifyUser = await usermodel.findOne({ email });
-  const filterResponse = {_id:verifyUser._id,username:verifyUser.username,email:verifyUser.email,img:verifyUser.img,isVerified:verifyUser.isVerified}
-  if (verifyUser) {
-      const match = bcrypt.compare(password, verifyUser.password);
-      if(match){
-        return {success: true, message: "Login Success",data:filterResponse };
-      }else{
-        return {success: false, message: "Invalid Credentials" };
-      }
-  } else {
-    return {success: false, message: "User not found" };
+
+  try {
+    // Find user by email
+    const verifyUser = await usermodel.findOne({ email });
+    
+    // If user doesn't exist
+    if (!verifyUser) {
+      return { success: false, message: "Invalid credentials" }; // Generic message for security
+    }
+
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, verifyUser.password);
+    
+    if (!isMatch) {
+      return { success: false, message: "Invalid credentials" }; // Generic message for security
+    }
+
+    // Check if user is verified (if your system requires verification)
+    if (verifyUser.isVerified === false) {
+      return { success: false, message: "Account not verified. Please check your email." };
+    }
+
+    // Prepare user data to return (excluding sensitive information)
+    const filterResponse = {
+      _id: verifyUser._id,
+      username: verifyUser.username,
+      email: verifyUser.email,
+      img: verifyUser.img,
+      isVerified: verifyUser.isVerified
+    };
+
+    return { 
+      success: true, 
+      message: "Login successful",
+      data: filterResponse 
+    };
+
+  } catch (error) {
+    console.error("Login error:", error);
+    return { 
+      success: false, 
+      message: "An error occurred during login. Please try again." 
+    };
   }
 };
-
 
 module.exports = {
   userRegServices,

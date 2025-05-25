@@ -1,7 +1,9 @@
 const { message } = require("statuses");
 const  blogModel  = require("../models/blog.model");
 const blogCategoryModel = require("../models/blog-catagory.models");
+const usermodel = require("../models/user.models");
 
+//create blog 
 const createBlogService = async(data) =>{
     try{
         const{userId,category,title,description,blog,image} = data;
@@ -19,7 +21,7 @@ const createBlogService = async(data) =>{
             return {success:false,message:"Something went wrong",error:err};
     }
 }
-
+//
 const getBlogService = async (data) => {
     try {
         // Create the initial match stage (empty if no category filter)
@@ -140,9 +142,130 @@ const getSingleBlogService = async(data) =>{
     }
 }
 
+//users blog
+const getUsersBlogService = async (data) => {
+    try {
+        const { userId, category } = data;
+
+        var userInfo  
+        if (!userId) {
+            return { success: false, message: "User ID is required" };
+        }else{
+            const userData = await usermodel.findOne({_id:userId});
+              userInfo = userData
+        }
+
+        let query = { userId };
+        if (category) {
+            query.category = category;
+        }
+
+        const fetchedData = await blogModel.find(query);
+
+        if (!fetchedData || fetchedData.length === 0) {
+            return { 
+                success: false, 
+                message: category 
+                    ? "No blogs found in this category" 
+                    : "No blogs found for this user" 
+            };
+        }
+
+        return { 
+            success: true, 
+            message: "Blogs fetched successfully", 
+            data: {blogData:fetchedData,userData:userInfo} 
+        };
+
+    } catch (err) {
+        console.error("Error fetching blogs:", err);
+        return { 
+            success: false, 
+            message: "Something went wrong", 
+            error: err.message 
+        };
+    }
+};
+
+const updateUsersBlogService = async (data, updateData) => {
+    try {
+        // Validate inputs
+        if (!data || !data._id) {
+            return {
+                success: false,
+                message: "Blog ID is required",
+                data: null
+            };
+        }
+
+        if (!updateData || Object.keys(updateData).length === 0) {
+            return {
+                success: false,
+                message: "No update data provided",
+                data: null
+            };
+        }
+
+        const { _id } = data;
+        
+        // Perform the update
+        const updatedDataResult = await blogModel.findOneAndUpdate(
+            { _id },
+            { $set: updateData },  // Use $set operator for safer updates
+            { 
+                new: true,
+                runValidators: true  // Ensure validations are run on update
+            }
+        );
+        
+        if (!updatedDataResult) {
+            return {
+                success: false,
+                message: "Blog not found",
+                data: null
+            };
+        }
+
+        return {
+            success: true,
+            message: "Blog updated successfully",
+            data: updatedDataResult
+        };
+
+    } catch (err) {
+        console.error("Error updating blog:", err);
+        return {
+            success: false,
+            message: err.message.includes("validation") 
+                ? "Validation failed: " + err.message
+                : "Failed to update blog",
+            error: err.message,
+            data: null
+        };
+    }
+};
+
+const deleteUserBlogService = async(userData) =>{
+    try{
+        const{_id} = userData;
+        console.log(_id)
+       const data = await blogModel.findOneAndDelete({_id});
+       if(data){
+        return {success:true,message:"Blog deleted Success",data:data};
+       }else{
+         return {success:false,message:"Blog deleted Success",data:data};
+       }
+    }catch(err){
+        return{success:false,message:"Something went wrong",errror:err}
+    }
+}
+
 module.exports = {
      createBlogService,
      getBlogCategoryService,
      getBlogService,
-     getSingleBlogService
+     getSingleBlogService,
+     getUsersBlogService,
+     updateUsersBlogService,
+     deleteUserBlogService
 }
