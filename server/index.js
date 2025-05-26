@@ -23,6 +23,7 @@ const getSingleBlogRoute = require("./routes/blog.routes");
 const getUserBlogRoute = require("./routes/blog.routes");
 const updateUserBlogRoute = require("./routes/blog.routes");
 const deleteUserBlogRoute = require("./routes/blog.routes");
+const likeBlogRouter = require("./routes/blog.routes");
 
 
 //auth router
@@ -40,6 +41,7 @@ app.use("/api",getSingleBlogRoute)
 app.use("/api",getUserBlogRoute)
 app.use("/api",updateUserBlogRoute)
 app.use("/api",deleteUserBlogRoute)
+app.use("/api",likeBlogRouter)
 
 app.get("/",(req,res)=>{
     res.send("ALL OK");

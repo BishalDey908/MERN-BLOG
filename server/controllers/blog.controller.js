@@ -1,4 +1,4 @@
-const { createBlogService, getBlogCategoryService, getBlogService, getSingleBlogService, usersBlogService, getUsersBlogService, updateUsersBlogService, deleteUserBlogService } = require("../services/blog.service")
+const { createBlogService, getBlogCategoryService, getBlogService, getSingleBlogService, usersBlogService, getUsersBlogService, updateUsersBlogService, deleteUserBlogService, blogLikeService } = require("../services/blog.service")
 
 const blgCreationController = async(req,res) =>{
     try{
@@ -122,6 +122,16 @@ const deleteUserBlogController = async (req, res) => {
     }
 };
 
+const likeBlogService = async (req, res) => {
+  const result = await blogLikeService(req.body);
+  
+  if (result.error) {
+    return res.status(result.status || 400).json(result);
+  }
+  
+  res.json(result);
+};
+
 module.exports = {
  blgCreationController,
  getBlogCategoryController,
@@ -129,5 +139,6 @@ module.exports = {
  getSingleBlogController,
  getUserBlogController,
  updateUserBlogController,
- deleteUserBlogController
+ deleteUserBlogController,
+ likeBlogService
 }

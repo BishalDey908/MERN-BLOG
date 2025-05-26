@@ -7,8 +7,16 @@ const Navbar = () => {
     const [userdata, setUserData] = useState(null);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [totalBlogs, setTotalBlogs] = useState(false);
+    const [userId,setUserId]=useState()
+    const [blogTrigger,setBlogTrigger] = useState()
     const profileRef = useRef(null);
 
+    useEffect(()=>{
+        const newBlogTrinner = localStorage.getItem("newBlogTrigger")
+        setBlogTrigger(newBlogTrinner)
+    },[])
+    console.log(userId)
+    
     useEffect(() => {
         const _id = Cookies.get("userId");
         if (_id) {
@@ -28,8 +36,14 @@ const Navbar = () => {
                     console.log(err);
                 });
         }
-    }, []);
+    }, [userId,setBlogTrigger]);
 
+    setInterval(()=>{
+        const _id = Cookies.get("userId");
+        setUserId(_id)
+        
+    },100)
+    
     
 
     // Close profile dropdown when clicking outside
@@ -49,6 +63,10 @@ const Navbar = () => {
     const handleLogout = () => {
         Cookies.remove('userId');
         Cookies.remove('username');
+        localStorage.removeItem("username")
+        localStorage.removeItem("userImg")
+        localStorage.removeItem("result")
+        localStorage.removeItem("id")
         window.location.reload(); // Refresh to update auth state
     };
 
@@ -130,9 +148,7 @@ const Navbar = () => {
                                     to="/user-blog"
                                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 >
-                                    Your Blogs <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-blue-600 text-white text-xs font-medium">
-  {totalBlogs?.blogData?.length || 0}
-</span>
+                                    Your Blogs 
                                 </Link>
                             </div>
                             <div className="py-1 border-t border-gray-100">
@@ -155,7 +171,7 @@ const Navbar = () => {
                         Login
                     </Link>
                     <Link
-                        to="/register"
+                        to="/reg"
                         className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
                     >
                         Register

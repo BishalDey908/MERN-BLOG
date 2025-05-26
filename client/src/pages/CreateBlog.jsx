@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 const CreateBlog = () => {
   const [formData, setFormData] = useState({ title: "", description: "", blog: "" });
@@ -9,6 +10,7 @@ const CreateBlog = () => {
   const [message, setMessage] = useState({ text: "", type: "" });
   const [fetchBlogCatagory, setFetchBlogCatagory] = useState([]);
   const [selectedBlogCategory, setSelectedBlogCategory] = useState();
+  const[newBlogTrigger,setNewBlogTrigger] = useState(false)
 
   console.log(selectedBlogCategory)
 
@@ -68,9 +70,9 @@ const CreateBlog = () => {
       if (!formData.title || !formData.blog || !blogData.imageUrl || !blogData.category) {
         throw new Error("Title, Featured Img, Blog Category and Blog Content are required.");
       }
-
+       const userId = Cookies.get("userId")
       const res = await axios.post(`${import.meta.env.VITE_KEY}/create-blog`, {
-        userId:"6830735989d8f7443461d32d",
+        userId:userId,
         title: blogData.title,
         description: blogData.description,
         image: blogData.imageUrl,
@@ -83,6 +85,8 @@ const CreateBlog = () => {
         setFormData({ title: "", description: "", blog: "" });
         setImg(null);
         setPreview("");
+        setNewBlogTrigger(!newBlogTrigger)
+        localStorage.setItem("newBlogTrigger",newBlogTrigger)
       }
     } catch (err) {
       setMessage({ text: err.message || "Failed to create blog", type: "error" });
