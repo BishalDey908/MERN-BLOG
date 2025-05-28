@@ -1,4 +1,4 @@
-const { createBlogService, getBlogCategoryService, getBlogService, getSingleBlogService, usersBlogService, getUsersBlogService, updateUsersBlogService, deleteUserBlogService, blogLikeService } = require("../services/blog.service")
+const { createBlogService, getBlogCategoryService, getBlogService, getSingleBlogService, usersBlogService, getUsersBlogService, updateUsersBlogService, deleteUserBlogService, blogLikeService, createCommentService, getUserCommentService, deleteCommentService } = require("../services/blog.service")
 
 const blgCreationController = async(req,res) =>{
     try{
@@ -132,6 +132,87 @@ const likeBlogService = async (req, res) => {
   res.json(result);
 };
 
+const createCommentControlller = async (req, res) => {
+    try {
+       
+        const responseData = await createCommentService(req.body);
+        
+        if (responseData.success) {
+            res.status(200).json({
+                message: responseData.message,
+                success: responseData.success,
+                data: responseData.data
+            });
+        } else {
+            res.status(400).json({
+                message: responseData.message,
+                success: responseData.success,
+                data: responseData.data
+            });
+        }
+    } catch (err) {
+        res.status(500).json({
+            message: err.message,
+            success: err.success,
+            error: err.error
+        });
+    }
+};
+
+const deleteCommentControlller = async (req, res) => {
+    try {
+       
+        const responseData = await deleteCommentService(req.body);
+        
+        if (responseData.success) {
+            res.status(200).json({
+                message: responseData.message,
+                success: responseData.success,
+                data: responseData.data
+            });
+        } else {
+            res.status(400).json({
+                message: responseData.message,
+                success: responseData.success,
+                data: responseData.data
+            });
+        }
+    } catch (err) {
+        res.status(500).json({
+            message: err.message,
+            success: err.success,
+            error: err.error
+        });
+    }
+};
+
+const getUserCommentControlller = async (req, res) => {
+    try {
+       
+        const responseData = await getUserCommentService(req.body);
+        
+        if (responseData.success) {
+            res.status(200).json({
+                message: responseData.message,
+                success: responseData.success,
+                data: responseData.data
+            });
+        } else {
+            res.status(400).json({
+                message: responseData.message,
+                success: responseData.success,
+                data: responseData.data
+            });
+        }
+    } catch (err) {
+        res.status(500).json({
+            message: err.message,
+            success: err.success,
+            error: err.error
+        });
+    }
+};
+
 module.exports = {
  blgCreationController,
  getBlogCategoryController,
@@ -140,5 +221,8 @@ module.exports = {
  getUserBlogController,
  updateUserBlogController,
  deleteUserBlogController,
- likeBlogService
+ likeBlogService,
+ createCommentControlller,
+ getUserCommentControlller,
+ deleteCommentControlller
 }

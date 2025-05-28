@@ -2,6 +2,7 @@ const { message } = require("statuses");
 const blogModel = require("../models/blog.model");
 const blogCategoryModel = require("../models/blog-catagory.models");
 const usermodel = require("../models/user.models");
+const commentModel = require("../models/comment.models");
 
 //create blog
 const createBlogService = async (data) => {
@@ -39,7 +40,8 @@ const createBlogService = async (data) => {
     return { success: false, message: "Something went wrong", error: err };
   }
 };
-//
+
+//Get all blogs
 const getBlogService = async (data) => {
   try {
     // Create the initial match stage (empty if no category filter)
@@ -133,6 +135,7 @@ const getBlogService = async (data) => {
   }
 };
 
+//Get all Blog's Category
 const getBlogCategoryService = async (data) => {
   try {
     const receaveData = await blogCategoryModel.find({});
@@ -154,6 +157,7 @@ const getBlogCategoryService = async (data) => {
   }
 };
 
+//Get single blog
 const getSingleBlogService = async (data) => {
   try {
     const { _id } = data;
@@ -168,7 +172,7 @@ const getSingleBlogService = async (data) => {
   }
 };
 
-//users blog
+//user's blog
 const getUsersBlogService = async (data) => {
   try {
     const { userId, category } = data;
@@ -212,6 +216,7 @@ const getUsersBlogService = async (data) => {
   }
 };
 
+//update user's blog
 const updateUsersBlogService = async (data, updateData) => {
   try {
     // Validate inputs
@@ -269,6 +274,7 @@ const updateUsersBlogService = async (data, updateData) => {
   }
 };
 
+//delete user's blog
 const deleteUserBlogService = async (userData) => {
   try {
     const { _id } = userData;
@@ -284,6 +290,7 @@ const deleteUserBlogService = async (userData) => {
   }
 };
 
+//blog like 
 const blogLikeService = async (data) => {
   try {
     const { blogId, userId } = data;
@@ -327,6 +334,110 @@ const blogLikeService = async (data) => {
   }
 };
 
+//Create Comment
+const createCommentService = async (data) => {
+  try {
+    const {blogId, userId, comment } = data;
+    console.log(data)
+    
+    // Validate required fields
+    if (!blogId || !userId || !comment) {
+      return {
+        success: false,
+        message: "Missing required fields userId and comment"
+      };
+    }
+    
+    let userData
+    await usermodel.findOne({_id:userId})
+    .then((data)=>{
+      userData = data     
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
+
+    const newComment = await commentModel.create({
+      username:userData.username,
+      userId,
+      userImg:userData.img,
+      blogId,
+      comment
+    });
+
+    return {
+      success: true,
+      message: "Comment posted successfully",
+      data: newComment
+    };
+
+  } catch (err) {
+    console.error("Error creating comment:", err);
+    return {
+      success: false,
+      message: err.message || "Failed to create comment",
+      error: process.env.NODE_ENV === 'development' ? err : undefined
+    };
+  }
+};
+
+//Delete Comment
+const deleteCommentService = async (data) => {
+  try {
+    const { commentId, userId } = data;
+    
+    // Validate required fields
+    if (!commentId || !userId) {
+      return {
+        success: false,
+        message: "Missing required fields: commentId and userId"
+      };
+    }
+
+    // Find and delete the comment if it belongs to the user
+    const deletedComment = await commentModel.findOneAndDelete({
+      _id: commentId,
+      userId
+    });
+
+    if (!deletedComment) {
+      return {
+        success: false,
+        message: "Comment not found or you don't have permission to delete it"
+      };
+    }
+
+    return {
+      success: true,
+      message: "Comment deleted successfully",
+      data: deletedComment
+    };
+
+  } catch (err) {
+    console.error("Error deleting comment:", err);
+    return {
+      success: false,
+      message: err.message || "Failed to delete comment",
+      error: process.env.NODE_ENV === 'development' ? err : undefined
+    };
+  }
+};
+
+//get user comment
+const getUserCommentService = async(data) =>{
+     const{blogId} = data
+     try{
+     const response = await commentModel.find({ blogId }).sort({ createdAt: -1 });
+     if(response){
+      return {success:true,message:"comment get successful",data:response}
+     }else{
+       return {success:false,message:"comment get failed",data:response}
+     }
+     }catch(err){
+        return {success:false,message:"Something went wrong",data:err}
+     }
+}
+
 module.exports = {
   createBlogService,
   getBlogCategoryService,
@@ -335,5 +446,8 @@ module.exports = {
   getUsersBlogService,
   updateUsersBlogService,
   deleteUserBlogService,
-  blogLikeService
+  blogLikeService,
+  createCommentService,
+  getUserCommentService,
+  deleteCommentService
 };

@@ -24,6 +24,9 @@ const getUserBlogRoute = require("./routes/blog.routes");
 const updateUserBlogRoute = require("./routes/blog.routes");
 const deleteUserBlogRoute = require("./routes/blog.routes");
 const likeBlogRouter = require("./routes/blog.routes");
+const createCommentRouter = require("./routes/blog.routes");
+const getCommentRouter = require("./routes/blog.routes");
+const deleteCommentRouter = require("./routes/blog.routes");
 
 
 //auth router
@@ -42,6 +45,9 @@ app.use("/api",getUserBlogRoute)
 app.use("/api",updateUserBlogRoute)
 app.use("/api",deleteUserBlogRoute)
 app.use("/api",likeBlogRouter)
+app.use("/api",createCommentRouter)
+app.use("/api",getCommentRouter)
+app.use("/api",deleteCommentRouter)
 
 app.get("/",(req,res)=>{
     res.send("ALL OK");

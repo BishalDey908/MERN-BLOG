@@ -12,19 +12,19 @@ const blogSchema = new mongoose.Schema(
     },
     title: {
       type: String,
-      require: true,
+      required: true,
     },
     description: {
       type: String,
-      require: true,
+      required: true,
     },
     image: {
       type: String,
-      require: true,
+      required: true,
     },
     blog: {
       type: String,
-      require: true,
+      required: true,
     },
     likes: [
       {
